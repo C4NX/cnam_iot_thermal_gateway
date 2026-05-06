@@ -1,0 +1,19 @@
+[project]
+name = "iot-thermal-gateway"
+version = "0.1.0"
+description = "Flask gateway for M5 Stack Nano to send temperature data to EC2"
+requires-python = ">=3.8"
+dependencies = [
+    "flask>=2.3.0",
+    "requests>=2.31.0"
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[dependency-groups]
+dev = ["pytest>=7.0", "black>=23.0", "ruff>=0.1.0"]
