@@ -9,6 +9,10 @@ import logging
 from flask import Flask, request, jsonify
 import requests
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -87,6 +91,33 @@ def receive_sensor_data():
     except Exception as e:
         logger.error(f"Error processing request: {str(e)}")
         return jsonify({"error": "Internal server error"}), 500
+
+
+@app.route("/alert", methods=["GET"])
+def get_alert():
+    """
+    Get alert status from EC2 API
+    Used by M5 Stack monitor to check if temperature is in alert state
+    """
+    try:
+        response = requests.get(
+            f"{EC2_API_URL}/alert",
+            timeout=TIMEOUT
+        )
+        response.raise_for_status()
+        
+        data = response.json()
+        logger.info(f"Alert status retrieved: is_alert={data.get('is_alert')}")
+        
+        return jsonify(data), 200
+        
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Failed to get alert status from EC2 API: {str(e)}")
+        return jsonify({
+            "error": "Failed to get alert status",
+            "is_alert": False,
+            "message": f"EC2 connection failed: {str(e)}"
+        }), 503
 
 
 @app.route("/health", methods=["GET"])

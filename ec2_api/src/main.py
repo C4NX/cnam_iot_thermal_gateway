@@ -12,6 +12,10 @@ import boto3
 from botocore.exceptions import ClientError
 from decimal import Decimal
 from uuid import uuid4
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
